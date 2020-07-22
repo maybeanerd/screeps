@@ -1,11 +1,11 @@
-import { toSource, deleteSource } from "helper/helper.move";
+import { deleteSource, grabEnergyFromMiner } from "helper/helper.move";
 
 export function run(creep: Creep) {
   if (creep.memory.working && creep.carry.energy == 0) {
     creep.memory.working = false;
-    creep.say("🔄 harvest");
+    creep.say("🔄 grab E-Girls");
   }
-  if (!creep.memory.working && creep.carry.energy == creep.carryCapacity) {
+  if (!creep.memory.working && creep.carry.energy >= creep.carryCapacity / 2) {
     deleteSource(creep);
     creep.memory.working = true;
     creep.say("🚧 build");
@@ -24,6 +24,6 @@ export function run(creep: Creep) {
       }
     }
   } else {
-    toSource(creep);
+    grabEnergyFromMiner(creep);
   }
 }

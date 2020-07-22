@@ -1,11 +1,17 @@
-import { toSource, deleteSource } from "helper/helper.move";
+import { toSource, deleteSource, grabEnergyFromMiner } from "helper/helper.move";
 
 export function run(creep: Creep) {
-  if (creep.carry.energy < creep.carryCapacity) {
-    toSource(creep);
-  } else {
+  if (creep.memory.working && creep.carry.energy == 0) {
+    creep.memory.working = false;
+    creep.say("🔄 fetch");
+  }
+  if (!creep.memory.working && creep.carry.energy >= creep.carryCapacity / 2) {
     deleteSource(creep);
-    //let targets = creep.room.find(FIND_STRUCTURES, {
+    creep.memory.working = true;
+    creep.say("⚡ deliver");
+  }
+
+  if (creep.memory.working) {
     let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
       filter: (structure) => {
         return (
@@ -17,7 +23,6 @@ export function run(creep: Creep) {
       }
     });
     if (!target) {
-      //targets = creep.room.find(FIND_STRUCTURES, {
       target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
         filter: (structure) => {
           return (
@@ -37,5 +42,7 @@ export function run(creep: Creep) {
         });
       }
     }
+  } else {
+    grabEnergyFromMiner(creep);
   }
 }

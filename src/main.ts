@@ -1,38 +1,46 @@
 import { ErrorMapper } from "utils/ErrorMapper";
 
-import { run as runHarvester } from "./creeps/role.harvester";
+import { run as runFetcher } from "./creeps/role.fetcher";
 import { run as runUpgrader } from "./creeps/role.upgrader";
 import { run as runBuilder } from "./creeps/role.builder";
 import { run as runRepairer } from "./creeps/role.repairer";
+import { run as runMiner } from "./creeps/role.miner";
 
 const roles = [
   {
-    name: "harvester",
-    startcount: 3,
+    name: "miner",
+    startcount: 2,
     startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+    body: [WORK, WORK, WORK, WORK, CARRY, MOVE],
+    count: 2
+  },
+  {
+    name: "fetcher",
+    startcount: 1,
+    startbody: [CARRY, CARRY, MOVE, MOVE],
+    body: [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     count: 2
   },
   {
     name: "upgrader",
     startcount: 1,
     startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE],
-    count: 3
+    body: [WORK, CARRY, CARRY, CARRY, CARRY, MOVE],
+    count: 1
   },
   {
     name: "builder",
-    startcount: 2,
+    startcount: 1,
     startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
-    count: 2
+    body: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
+    count: 1
   },
   {
     name: "repairer",
     startcount: 1,
     startbody: [WORK, CARRY, MOVE],
     body: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
-    count: 2
+    count: 1
   }
 ];
 
@@ -91,14 +99,16 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
   for (const name in Game.creeps) {
     const creep = Game.creeps[name];
-    if (creep.memory.role === "harvester") {
-      runHarvester(creep);
+    if (creep.memory.role === "fetcher") {
+      runFetcher(creep);
     } else if (creep.memory.role === "upgrader") {
       runUpgrader(creep);
     } else if (creep.memory.role === "builder") {
       runBuilder(creep);
     } else if (creep.memory.role === "repairer") {
       runRepairer(creep);
+    } else if (creep.memory.role === "miner") {
+      runMiner(creep);
     }
   }
 });
