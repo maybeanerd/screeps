@@ -18,7 +18,7 @@ const roles = [
     name: "fetcher",
     startcount: 1,
     startbody: [CARRY, CARRY, MOVE, MOVE],
-    body: [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+    body: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     count: 2
   },
   {
@@ -55,6 +55,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
+  let minerMaxed = false;
   const spawning = Game.spawns[mainSpawner].spawning;
   if (!spawning) {
     // make sure we always have the minimum amount of screeps
@@ -63,12 +64,14 @@ export const loop = ErrorMapper.wrapLoop(() => {
       const creepswithrole = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
       if (creepswithrole.length < role.startcount + role.count) {
         const newName = role.name + " " + Game.time;
-        const canSpawn = Game.spawns[mainSpawner].spawnCreep(role.body, "big " + newName, {
-          memory: {
-            role: role.name,
-            working: false
-          }
-        });
+        const canSpawn = !minerMaxed
+          ? null
+          : Game.spawns[mainSpawner].spawnCreep(role.body, "big " + newName, {
+              memory: {
+                role: role.name,
+                working: false
+              }
+            });
         if (canSpawn === OK) {
           break;
         } else if (creepswithrole.length < role.startcount) {
@@ -79,6 +82,11 @@ export const loop = ErrorMapper.wrapLoop(() => {
             }
           });
           break;
+        }
+        if (role.name === "miner" && creepswithrole.length < role.startcount + role.count) {
+          minerMaxed = false;
+        } else {
+          minerMaxed = true;
         }
       }
     }
