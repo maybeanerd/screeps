@@ -12,7 +12,8 @@ export function run(creep: Creep) {
   }
   if (creep.store[RESOURCE_ENERGY] === creep.store.getCapacity(RESOURCE_ENERGY)) {
     const [container] = creep.pos.findInRange(FIND_STRUCTURES, 1, {
-      filter: (struct) => struct.structureType === STRUCTURE_CONTAINER
+      filter: (struct) =>
+        struct.structureType === STRUCTURE_CONTAINER && struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
     });
     if (container) {
       creep.transfer(container, RESOURCE_ENERGY);
