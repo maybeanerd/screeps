@@ -1,5 +1,3 @@
-import { toSource } from "helper/helper.move";
-
 export function run(creep: Creep) {
   if (!creep.memory.targetSource) {
     const sources = creep.room.find(FIND_SOURCES);
@@ -12,9 +10,14 @@ export function run(creep: Creep) {
     console.log(sourceindex);
     creep.memory.targetSource = sources[sourceindex].id;
   }
-  /*   if (creep.store[RESOURCE_ENERGY] === creep.store.getCapacity(RESOURCE_ENERGY)){
-    // TODO put into storage
-  } */
+  if (creep.store[RESOURCE_ENERGY] === creep.store.getCapacity(RESOURCE_ENERGY)) {
+    const [container] = creep.pos.findInRange(FIND_STRUCTURES, 1, {
+      filter: (struct) => struct.structureType === STRUCTURE_CONTAINER
+    });
+    if (container) {
+      creep.transfer(container, RESOURCE_ENERGY);
+    }
+  }
   const target = Game.getObjectById(creep.memory.targetSource);
   if (target && creep.harvest(target) == ERR_NOT_IN_RANGE) {
     creep.moveTo(target, {

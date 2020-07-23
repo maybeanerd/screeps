@@ -10,7 +10,7 @@ function toTarget(creep: Creep, trgt: any) {
     if (sourceindex > 1) {
       sourceindex = 0;
     }
-    console.log(sourceindex);
+    /* console.log(sourceindex); */
     creep.memory.targetSource = sources[sourceindex /* 0 */].id;
     /* const targetSource = creep.pos.findClosestByPath(FIND_SOURCES);
             creep.memory.targetSource = targetSource; */
@@ -42,7 +42,7 @@ function findImportantStructuresFirst(creep: Creep) {
       return importantTargets.findIndex((el) => el === targ.structureType) > -1 && targ.hits < targ.hitsMax * 0.8;
     }
   });
-  console.log("repair target halflife:", target);
+  /* console.log("repair target halflife:", target); */
   if (target) {
     if (creep.repair(target) == ERR_NOT_IN_RANGE) {
       creep.moveTo(target, {
