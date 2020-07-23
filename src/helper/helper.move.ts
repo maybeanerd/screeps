@@ -32,7 +32,7 @@ export function grabEnergyFromMiner(creep: Creep) {
       return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy >= creep.carryCapacity;
     }
   });
-  console.log("fetcher potential target", potentialTarget);
+  /* console.log("fetcher potential target", potentialTarget); */
   if (potentialTarget && creep.withdraw(potentialTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
     creep.moveTo(potentialTarget, {
       visualizePathStyle: {

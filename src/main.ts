@@ -6,41 +6,84 @@ import { run as runBuilder } from "./creeps/role.builder";
 import { run as runRepairer } from "./creeps/role.repairer";
 import { run as runMiner } from "./creeps/role.miner";
 
-const roles = [
+const roles = new Map([
+  [
+    "miner",
+    {
+      small: [WORK, CARRY, MOVE],
+      medium: [WORK, WORK, WORK, WORK, CARRY, MOVE]
+    }
+  ],
+  [
+    "fetcher",
+    {
+      small: [CARRY, CARRY, MOVE, MOVE],
+      medium: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE]
+    }
+  ],
+  [
+    "upgrader",
+    {
+      small: [WORK, CARRY, MOVE],
+      medium: [WORK, CARRY, CARRY, CARRY, CARRY, MOVE]
+    }
+  ],
+  [
+    "builder",
+    {
+      small: [WORK, CARRY, MOVE],
+      medium: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE]
+    }
+  ],
+  [
+    "repairer",
+    {
+      small: [WORK, CARRY, MOVE],
+      medium: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE]
+    }
+  ]
+]);
+
+const rolesPrioritized: Array<{ name: string; count: number }> = [
   {
     name: "miner",
-    startcount: 2,
-    startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, WORK, WORK, CARRY, MOVE],
     count: 2
   },
   {
     name: "fetcher",
-    startcount: 2,
-    startbody: [CARRY, CARRY, MOVE, MOVE],
-    body: [CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
     count: 2
   },
   {
     name: "upgrader",
-    startcount: 1,
-    startbody: [WORK, CARRY, MOVE],
-    body: [WORK, CARRY, CARRY, CARRY, CARRY, MOVE],
     count: 1
   },
   {
     name: "builder",
-    startcount: 1,
-    startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
     count: 1
   },
   {
     name: "repairer",
-    startcount: 1,
-    startbody: [WORK, CARRY, MOVE],
-    body: [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE],
     count: 1
+  },
+  {
+    name: "miner",
+    count: 4
+  },
+  {
+    name: "fetcher",
+    count: 4
+  },
+  {
+    name: "upgrader",
+    count: 3
+  },
+  {
+    name: "builder",
+    count: 2
+  },
+  {
+    name: "repairer",
+    count: 2
   }
 ];
 
@@ -55,39 +98,40 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
-  let minerMaxed = false;
+  const creepTypes = new Map<string, number>();
+  Object.values(Game.creeps).forEach((creep) =>
+    creepTypes.set(creep.memory.role, (creepTypes.get(creep.memory.role) || 0) + 1)
+  );
+  console.log("----------------------------------");
+  creepTypes.forEach((count, name) => console.log(name, ": ", count));
+
   const spawning = Game.spawns[mainSpawner].spawning;
   if (!spawning) {
-    // make sure we always have the minimum amount of screeps
-    for (const roleid in roles) {
-      const role = roles[roleid];
+    for (let i = 0; i < rolesPrioritized.length; i++) {
+      const role = rolesPrioritized[i];
+      const bodies = roles.get(role.name);
+      if (!bodies) {
+        throw new Error("Trying to spawn creep role without body definition");
+      }
       const creepswithrole = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
-      if (creepswithrole.length < role.startcount + role.count) {
+      if (creepswithrole.length < role.count) {
         const newName = role.name + " " + Game.time;
-        const canSpawn =
-          !minerMaxed && role.name !== "miner"
-            ? null
-            : Game.spawns[mainSpawner].spawnCreep(role.body, "big " + newName, {
-                memory: {
-                  role: role.name,
-                  working: false
-                }
-              });
+        const canSpawn = Game.spawns[mainSpawner].spawnCreep(bodies.medium, "medium " + newName, {
+          memory: {
+            role: role.name,
+            working: false
+          }
+        });
         if (canSpawn === OK) {
           break;
-        } else if (creepswithrole.length < role.startcount) {
-          Game.spawns[mainSpawner].spawnCreep(role.startbody, "small " + newName, {
+        } else if (canSpawn === ERR_NOT_ENOUGH_ENERGY) {
+          Game.spawns[mainSpawner].spawnCreep(bodies.small, "small " + newName, {
             memory: {
               role: role.name,
               working: false
             }
           });
           break;
-        }
-        if (role.name === "miner" && creepswithrole.length < role.startcount + role.count) {
-          minerMaxed = false;
-        } else {
-          minerMaxed = true;
         }
       }
     }
