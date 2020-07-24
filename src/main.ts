@@ -70,7 +70,7 @@ const rolesPrioritized: Array<{ name: string; count: number }> = [
     count: 4
   },
   {
-    name: "fetcher",
+    name: "fetcher", // TODO redo fetchers, we only need 2 at most! we could use two or more of these bodies for delivering to the energy reservoir though
     count: 4
   },
   {
@@ -84,6 +84,10 @@ const rolesPrioritized: Array<{ name: string; count: number }> = [
   {
     name: "repairer",
     count: 2
+  },
+  {
+    name: "builder",
+    count: 3
   }
 ];
 
