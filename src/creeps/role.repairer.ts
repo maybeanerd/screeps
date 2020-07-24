@@ -53,20 +53,32 @@ function findImportantStructuresFirst(creep: Creep) {
     }
     return target;
   } else {
-    const unimportantTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-      filter: (targ) => targ.hits < targ.hitsMax / 2
+    const unimportantTargetLowLife = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+      filter: (targ) => targ.hits < targ.hitsMax * 0.1
     });
-    /*     console.log("repair unimportant target halflife:", unimportantTarget);*/
-
-    if (unimportantTarget) {
-      if (creep.repair(unimportantTarget) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(unimportantTarget, {
+    if (unimportantTargetLowLife) {
+      if (creep.repair(unimportantTargetLowLife) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(unimportantTargetLowLife, {
           visualizePathStyle: {
             stroke: "#ffffff"
           }
         });
       }
-      return unimportantTarget;
+      return unimportantTargetLowLife;
+    } else {
+      const unimportantTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (targ) => targ.hits < targ.hitsMax / 2
+      });
+      if (unimportantTarget) {
+        if (creep.repair(unimportantTarget) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(unimportantTarget, {
+            visualizePathStyle: {
+              stroke: "#ffffff"
+            }
+          });
+        }
+        return unimportantTarget;
+      }
     }
   }
   return null;
