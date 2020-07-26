@@ -87,7 +87,7 @@ const rolesPrioritized: Array<{ name: string; count: number }> = [
   },
   {
     name: "upgrader",
-    count: 6
+    count: 10
   }
 ];
 
