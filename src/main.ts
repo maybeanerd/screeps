@@ -87,7 +87,7 @@ const rolesPrioritized: Array<{ name: string; count: number }> = [
   },
   {
     name: "upgrader",
-    count: 10
+    count: 6
   }
 ];
 
@@ -102,6 +102,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
+
+  // TODO add logic to automate source zuweisung
+
   const creepTypes = new Map<string, number>();
   Object.values(Game.creeps).forEach((creep) =>
     creepTypes.set(creep.memory.role, (creepTypes.get(creep.memory.role) || 0) + 1)
