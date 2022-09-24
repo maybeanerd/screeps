@@ -29,7 +29,7 @@ export function deleteSource(creep: Creep) {
 export function grabEnergyFromMiner(creep: Creep) {
   const potentialTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
     filter: (structure) => {
-      return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy >= creep.carryCapacity;
+      return structure.structureType == STRUCTURE_CONTAINER && structure.store.energy >= creep.store.getCapacity();
     }
   });
   /* console.log("fetcher potential target", potentialTarget); */
