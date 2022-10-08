@@ -1,5 +1,7 @@
 import { deleteSource, grabEnergyFromMiner } from "helper/helper.move";
 
+const priorities: Array<BuildableStructureConstant> = [STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_ROAD];
+
 export function run(creep: Creep) {
   if (creep.memory.working && creep.store.energy == 0) {
     creep.memory.working = false;
@@ -12,8 +14,17 @@ export function run(creep: Creep) {
   }
 
   if (creep.memory.working) {
-    //const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-    const target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+    let target: ConstructionSite<BuildableStructureConstant> | null = null;
+    priorities.forEach((priority) => {
+      if (!target) {
+        target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES, {
+          filter: (site) => priority === site.structureType
+        });
+      }
+    });
+    if (!target) {
+      target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+    }
     if (target) {
       if (creep.build(target) == ERR_NOT_IN_RANGE) {
         creep.moveTo(target, {

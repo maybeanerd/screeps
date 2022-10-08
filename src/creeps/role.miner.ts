@@ -10,13 +10,21 @@ export function run(creep: Creep) {
     console.log(sourceindex);
     creep.memory.targetSource = sources[sourceindex].id;
   }
+
   if (creep.store[RESOURCE_ENERGY] === creep.store.getCapacity(RESOURCE_ENERGY)) {
+    console.log("attempting to store...");
     const [container] = creep.pos.findInRange(FIND_STRUCTURES, 1, {
       filter: (struct) =>
         struct.structureType === STRUCTURE_CONTAINER && struct.store.getFreeCapacity(RESOURCE_ENERGY) > 0
     });
     if (container) {
-      creep.transfer(container, RESOURCE_ENERGY);
+      console.log("found container...");
+      const transferPossible = creep.transfer(container, RESOURCE_ENERGY);
+      if (transferPossible !== OK) {
+        console.log("failed to put into container...");
+      }
+    } else {
+      console.log("did not find container...");
     }
   }
   const target = Game.getObjectById(creep.memory.targetSource);
