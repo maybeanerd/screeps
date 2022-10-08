@@ -1,13 +1,13 @@
 export function run(creep: Creep) {
   if (!creep.memory.targetSource) {
     const sources = creep.room.find(FIND_SOURCES);
-    //const sourceindex = Math.floor(Math.random() * Math.floor(sources.length));
-    // since id 0 has 3 slots, and id 1 has 1 slot, we will adjust the randomness accordingly
+    const sourceindex = Math.floor(Math.random() * Math.floor(sources.length));
+    /* // since id 0 has 3 slots, and id 1 has 1 slot, we will adjust the randomness accordingly
     let sourceindex = Math.floor(Math.random() * 4); // number between 0 and 3
     if (sourceindex > 1) {
       sourceindex = 0;
-    }
-    console.log(sourceindex);
+    } */
+    console.log("trying to mine source at index", sourceindex, ":", sources[sourceindex].id);
     creep.memory.targetSource = sources[sourceindex].id;
   }
 
