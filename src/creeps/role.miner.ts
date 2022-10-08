@@ -24,7 +24,8 @@ export function run(creep: Creep) {
         console.log("failed to put into container...");
       }
     } else {
-      console.log("did not find container...");
+      console.log("did not find container, dropping some energy...");
+      creep.drop(RESOURCE_ENERGY, 10);
     }
   }
   const target = Game.getObjectById(creep.memory.targetSource);
